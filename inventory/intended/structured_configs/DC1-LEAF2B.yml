@@ -12,6 +12,7 @@ router_bgp:
       type: ipv4
       remote_as: '65102'
       next_hop_self: true
+      description: DC1-LEAF2A
       password: vnEaG8gMeQf3d3cN6PktXQ==
       maximum_routes: 12000
       send_community: all
@@ -294,7 +295,7 @@ router_bgp:
 static_routes:
 - vrf: MGMT
   destination_address_prefix: 0.0.0.0/0
-  gateway: 10.255.0.1
+  gateway: 10.255.0.254
 service_routing_protocols_model: multi-agent
 ip_routing: true
 daemon_terminattr:
@@ -302,6 +303,7 @@ daemon_terminattr:
   - 10.255.0.1:9910
   cvauth:
     method: key
+    key: ''
   cvvrf: MGMT
   smashexcludes: ale,flexCounter,hardware,kni,pulse,strata
   ingestexclude: /Sysdb/cell/1/agent,/Sysdb/cell/2/agent
@@ -315,7 +317,7 @@ name_server:
   source:
     vrf: MGMT
   nodes:
-  - 192.168.2.1
+  - 17.1.1.10
   - 8.8.8.8
 spanning_tree:
   mode: mstp
@@ -327,15 +329,19 @@ local_users:
   admin:
     privilege: 15
     role: network-admin
-    sha512_password: $6$Df86J4/SFMDE3/1K$Hef4KstdoxNDaami37cBquTWOTplC.miMPjXVgQxMe92.e5wxlnXOLlebgPj8Fz1KO0za/RCO7ZIs4Q6Eiq1g1
+    sha512_password: $6$HEB.p1pQpAMXnkAJ$UP03UskWJlBKYcu62NrvIpVrjrB37Q3REuMFNzqxmkGus5pQIqcZA0dqNMHXDzFy2oZQa2jHZPqBmULxFsVcG.
   ansible:
     privilege: 15
     role: network-admin
-    sha512_password: $6$Dzu11L7yp9j3nCM9$FSptxMPyIL555OMO.ldnjDXgwZmrfMYwHSr0uznE5Qoqvd9a6UdjiFcJUhGLtvXVZR1r.A/iF5aAt50hf/EK4/
+    sha512_password: $6$yHKaDAJreUKUh.Am$w2EeKoYPKgRdxOdkNcXLRlv6sdWPc6/yb1Ct/hMTdNwoygwEjpqzks5RAiTRWy5SoRZxJR1UbdncJGR2hXwhI0
   cvpadmin:
     privilege: 15
     role: network-admin
-    sha512_password: $6$rZKcbIZ7iWGAWTUM$TCgDn1KcavS0s.OV8lacMTUkxTByfzcGlFlYUWroxYuU7M/9bIodhRO7nXGzMweUxvbk8mJmQl8Bh44cRktUj.
+    sha512_password: $6$CWrVRj8kyDRwfBAd$yBfrAoX.CwKxsldub1GDVqwVEB3hhrOXCafHoSq1OZcMpzzQR/3/3t408RqPtywmr8ttCI04eymCCOPNS.CtI/
+  test1:
+    privilege: 15
+    role: network-admin
+    sha512_password: $6$yHKaDAJreUKUh.Am$w2EeKoYPKgRdxOdkNcXLRlv6sdWPc6/yb1Ct/hMTdNwoygwEjpqzks5RAiTRWy5SoRZxJR1UbdncJGR2hXwhI0
 vrfs:
   MGMT:
     ip_routing: false
@@ -372,7 +378,7 @@ management_interfaces:
     shutdown: false
     vrf: MGMT
     ip_address: 10.255.0.16/24
-    gateway: 10.255.0.1
+    gateway: 10.255.0.254
     type: oob
 management_api_http:
   enable_vrfs:
@@ -493,13 +499,13 @@ vlan_interfaces:
     description: MLAG_PEER_L3_PEERING
     shutdown: false
     ip_address: 10.255.251.5/31
-    mtu: 1500
+    mtu: 1470
   Vlan4094:
     description: MLAG_PEER
     shutdown: false
     ip_address: 10.255.252.5/31
     no_autostate: true
-    mtu: 1500
+    mtu: 1470
   Vlan130:
     tenant: Tenant_A
     tags:
@@ -523,7 +529,7 @@ vlan_interfaces:
     description: 'MLAG_PEER_L3_iBGP: vrf Tenant_A_APP_Zone'
     vrf: Tenant_A_APP_Zone
     ip_address: 10.255.251.5/31
-    mtu: 1500
+    mtu: 1470
   Vlan140:
     tenant: Tenant_A
     tags:
@@ -548,7 +554,7 @@ vlan_interfaces:
     description: 'MLAG_PEER_L3_iBGP: vrf Tenant_A_DB_Zone'
     vrf: Tenant_A_DB_Zone
     ip_address: 10.255.251.5/31
-    mtu: 1500
+    mtu: 1470
   Vlan110:
     tenant: Tenant_A
     tags:
@@ -580,7 +586,7 @@ vlan_interfaces:
     description: 'MLAG_PEER_L3_iBGP: vrf Tenant_A_OP_Zone'
     vrf: Tenant_A_OP_Zone
     ip_address: 10.255.251.5/31
-    mtu: 1500
+    mtu: 1470
   Vlan150:
     tenant: Tenant_A
     tags:
@@ -596,7 +602,7 @@ vlan_interfaces:
     description: 'MLAG_PEER_L3_iBGP: vrf Tenant_A_WAN_Zone'
     vrf: Tenant_A_WAN_Zone
     ip_address: 10.255.251.5/31
-    mtu: 1500
+    mtu: 1470
   Vlan120:
     tenant: Tenant_A
     tags:
@@ -620,7 +626,7 @@ vlan_interfaces:
     description: 'MLAG_PEER_L3_iBGP: vrf Tenant_A_WEB_Zone'
     vrf: Tenant_A_WEB_Zone
     ip_address: 10.255.251.5/31
-    mtu: 1500
+    mtu: 1470
   Vlan210:
     tenant: Tenant_B
     tags:
@@ -643,7 +649,7 @@ vlan_interfaces:
     description: 'MLAG_PEER_L3_iBGP: vrf Tenant_B_OP_Zone'
     vrf: Tenant_B_OP_Zone
     ip_address: 10.255.251.5/31
-    mtu: 1500
+    mtu: 1470
   Vlan250:
     tenant: Tenant_B
     tags:
@@ -659,7 +665,7 @@ vlan_interfaces:
     description: 'MLAG_PEER_L3_iBGP: vrf Tenant_B_WAN_Zone'
     vrf: Tenant_B_WAN_Zone
     ip_address: 10.255.251.5/31
-    mtu: 1500
+    mtu: 1470
   Vlan310:
     tenant: Tenant_C
     tags:
@@ -681,7 +687,7 @@ vlan_interfaces:
     description: 'MLAG_PEER_L3_iBGP: vrf Tenant_C_OP_Zone'
     vrf: Tenant_C_OP_Zone
     ip_address: 10.255.251.5/31
-    mtu: 1500
+    mtu: 1470
   Vlan350:
     tenant: Tenant_C
     tags:
@@ -696,7 +702,7 @@ vlan_interfaces:
     description: 'MLAG_PEER_L3_iBGP: vrf Tenant_C_WAN_Zone'
     vrf: Tenant_C_WAN_Zone
     ip_address: 10.255.251.5/31
-    mtu: 1500
+    mtu: 1470
 port_channel_interfaces:
   Port-Channel3:
     description: MLAG_PEER_DC1-LEAF2A_Po3
@@ -740,7 +746,7 @@ ethernet_interfaces:
     peer_interface: Ethernet4
     peer_type: spine
     description: P2P_LINK_TO_DC1-SPINE1_Ethernet4
-    mtu: 1500
+    mtu: 1470
     type: routed
     shutdown: false
     ip_address: 172.31.255.13/31
@@ -749,7 +755,7 @@ ethernet_interfaces:
     peer_interface: Ethernet4
     peer_type: spine
     description: P2P_LINK_TO_DC1-SPINE2_Ethernet4
-    mtu: 1500
+    mtu: 1470
     type: routed
     shutdown: false
     ip_address: 172.31.255.15/31
@@ -777,8 +783,7 @@ route_maps:
         type: permit
         set:
         - origin incomplete
-        description: Make routes learned over MLAG Peer-link less preferred on spines
-          to ensure optimal routing
+        description: Make routes learned over MLAG Peer-link less preferred on spines to ensure optimal routing
   RM-CONN-2-BGP:
     sequence_numbers:
       10:
@@ -813,6 +818,7 @@ router_bfd:
     multiplier: 3
 ip_igmp_snooping:
   globally_enabled: true
+ip_virtual_router_mac_address: 00:1c:73:00:dc:01
 vxlan_interface:
   Vxlan1:
     description: DC1-LEAF2B_VTEP
@@ -879,14 +885,13 @@ vxlan_interface:
 virtual_source_nat_vrfs:
   Tenant_A_OP_Zone:
     ip_address: 10.255.1.6
-ip_virtual_router_mac_address: 00:1c:73:00:dc:01
 ntp:
   local_interface:
     name: Management1
     vrf: MGMT
   servers:
-  - name: 0.fr.pool.ntp.org
+  - name: 0.sg.pool.ntp.org
     preferred: true
     vrf: MGMT
-  - name: 1.fr.pool.ntp.org
+  - name: 1.sg.pool.ntp.org
     vrf: MGMT

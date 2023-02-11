@@ -1,6 +1,5 @@
 # DC1-SPINE2
 # Table of Contents
-<!-- toc -->
 
 - [Management](#management)
   - [Management Interfaces](#management-interfaces)
@@ -38,7 +37,6 @@
   - [VRF Instances Device Configuration](#vrf-instances-device-configuration)
 - [Quality Of Service](#quality-of-service)
 
-<!-- toc -->
 # Management
 
 ## Management Interfaces
@@ -49,7 +47,7 @@
 
 | Management Interface | description | Type | VRF | IP Address | Gateway |
 | -------------------- | ----------- | ---- | --- | ---------- | ------- |
-| Management1 | oob_management | oob | MGMT | 10.255.0.12/24 | 10.255.0.1 |
+| Management1 | oob_management | oob | MGMT | 10.255.0.12/24 | 10.255.0.254 |
 
 #### IPv6
 
@@ -74,14 +72,14 @@ interface Management1
 
 | Name Server | Source VRF |
 | ----------- | ---------- |
-| 192.168.2.1 | MGMT |
+| 17.1.1.10 | MGMT |
 | 8.8.8.8 | MGMT |
 
 ### Name Servers Device Configuration
 
 ```eos
 ip name-server vrf MGMT 8.8.8.8
-ip name-server vrf MGMT 192.168.2.1
+ip name-server vrf MGMT 17.1.1.10
 ```
 
 ## NTP
@@ -98,32 +96,31 @@ ip name-server vrf MGMT 192.168.2.1
 
 | Server | VRF | Preferred | Burst | iBurst | Version | Min Poll | Max Poll | Local-interface | Key |
 | ------ | --- | --------- | ----- | ------ | ------- | -------- | -------- | --------------- | --- |
-| 0.fr.pool.ntp.org | MGMT | True | - | - | - | - | - | - | - |
-| 1.fr.pool.ntp.org | MGMT | - | - | - | - | - | - | - | - |
+| 0.sg.pool.ntp.org | MGMT | True | - | - | - | - | - | - | - |
+| 1.sg.pool.ntp.org | MGMT | - | - | - | - | - | - | - | - |
 
 ### NTP Device Configuration
 
 ```eos
 !
 ntp local-interface vrf MGMT Management1
-ntp server vrf MGMT 0.fr.pool.ntp.org prefer
-ntp server vrf MGMT 1.fr.pool.ntp.org
+ntp server vrf MGMT 0.sg.pool.ntp.org prefer
+ntp server vrf MGMT 1.sg.pool.ntp.org
 ```
 
 ## Management API HTTP
 
 ### Management API HTTP Summary
 
-| HTTP | HTTPS |
-| ---------- | ---------- |
-| default | true |
+| HTTP | HTTPS | Default Services |
+| ---- | ----- | ---------------- |
+| False | True | - |
 
 ### Management API VRF Access
 
 | VRF Name | IPv4 ACL | IPv6 ACL |
 | -------- | -------- | -------- |
 | MGMT | - | - |
-
 
 ### Management API HTTP Configuration
 
@@ -148,14 +145,16 @@ management api http-commands
 | admin | 15 | network-admin |
 | ansible | 15 | network-admin |
 | cvpadmin | 15 | network-admin |
+| test1 | 15 | network-admin |
 
 ### Local Users Device Configuration
 
 ```eos
 !
-username admin privilege 15 role network-admin secret sha512 $6$Df86J4/SFMDE3/1K$Hef4KstdoxNDaami37cBquTWOTplC.miMPjXVgQxMe92.e5wxlnXOLlebgPj8Fz1KO0za/RCO7ZIs4Q6Eiq1g1
-username ansible privilege 15 role network-admin secret sha512 $6$Dzu11L7yp9j3nCM9$FSptxMPyIL555OMO.ldnjDXgwZmrfMYwHSr0uznE5Qoqvd9a6UdjiFcJUhGLtvXVZR1r.A/iF5aAt50hf/EK4/
-username cvpadmin privilege 15 role network-admin secret sha512 $6$rZKcbIZ7iWGAWTUM$TCgDn1KcavS0s.OV8lacMTUkxTByfzcGlFlYUWroxYuU7M/9bIodhRO7nXGzMweUxvbk8mJmQl8Bh44cRktUj.
+username admin privilege 15 role network-admin secret sha512 $6$HEB.p1pQpAMXnkAJ$UP03UskWJlBKYcu62NrvIpVrjrB37Q3REuMFNzqxmkGus5pQIqcZA0dqNMHXDzFy2oZQa2jHZPqBmULxFsVcG.
+username ansible privilege 15 role network-admin secret sha512 $6$yHKaDAJreUKUh.Am$w2EeKoYPKgRdxOdkNcXLRlv6sdWPc6/yb1Ct/hMTdNwoygwEjpqzks5RAiTRWy5SoRZxJR1UbdncJGR2hXwhI0
+username cvpadmin privilege 15 role network-admin secret sha512 $6$CWrVRj8kyDRwfBAd$yBfrAoX.CwKxsldub1GDVqwVEB3hhrOXCafHoSq1OZcMpzzQR/3/3t408RqPtywmr8ttCI04eymCCOPNS.CtI/
+username test1 privilege 15 role network-admin secret sha512 $6$yHKaDAJreUKUh.Am$w2EeKoYPKgRdxOdkNcXLRlv6sdWPc6/yb1Ct/hMTdNwoygwEjpqzks5RAiTRWy5SoRZxJR1UbdncJGR2hXwhI0
 ```
 
 # Monitoring
@@ -166,14 +165,14 @@ username cvpadmin privilege 15 role network-admin secret sha512 $6$rZKcbIZ7iWGAW
 
 | CV Compression | CloudVision Servers | VRF | Authentication | Smash Excludes | Ingest Exclude | Bypass AAA |
 | -------------- | ------------------- | --- | -------------- | -------------- | -------------- | ---------- |
-| gzip | 10.255.0.1:9910 | MGMT | - | ale,flexCounter,hardware,kni,pulse,strata | /Sysdb/cell/1/agent,/Sysdb/cell/2/agent | False |
+| gzip | 10.255.0.1:9910 | MGMT | key, | ale,flexCounter,hardware,kni,pulse,strata | /Sysdb/cell/1/agent,/Sysdb/cell/2/agent | False |
 
 ### TerminAttr Daemon Device Configuration
 
 ```eos
 !
 daemon TerminAttr
-   exec /usr/bin/TerminAttr -cvaddr=10.255.0.1:9910 -cvvrf=MGMT -smashexcludes=ale,flexCounter,hardware,kni,pulse,strata -ingestexclude=/Sysdb/cell/1/agent,/Sysdb/cell/2/agent -taillogs
+   exec /usr/bin/TerminAttr -cvaddr=10.255.0.1:9910 -cvauth=key, -cvvrf=MGMT -smashexcludes=ale,flexCounter,hardware,kni,pulse,strata -ingestexclude=/Sysdb/cell/1/agent,/Sysdb/cell/2/agent -taillogs
    no shutdown
 ```
 
@@ -182,9 +181,6 @@ daemon TerminAttr
 ## Spanning Tree Summary
 
 STP mode: **none**
-
-### Global Spanning-Tree Settings
-
 
 ## Spanning Tree Device Configuration
 
@@ -225,10 +221,10 @@ vlan internal order ascending range 1006 1199
 
 | Interface | Description | Type | Channel Group | IP Address | VRF |  MTU | Shutdown | ACL In | ACL Out |
 | --------- | ----------- | -----| ------------- | ---------- | ----| ---- | -------- | ------ | ------- |
-| Ethernet1 | P2P_LINK_TO_DC1-LEAF1A_Ethernet2 | routed | - | 172.31.255.2/31 | default | 1500 | false | - | - |
-| Ethernet2 | P2P_LINK_TO_DC1-LEAF1B_Ethernet2 | routed | - | 172.31.255.6/31 | default | 1500 | false | - | - |
-| Ethernet3 | P2P_LINK_TO_DC1-LEAF2A_Ethernet2 | routed | - | 172.31.255.10/31 | default | 1500 | false | - | - |
-| Ethernet4 | P2P_LINK_TO_DC1-LEAF2B_Ethernet2 | routed | - | 172.31.255.14/31 | default | 1500 | false | - | - |
+| Ethernet1 | P2P_LINK_TO_DC1-LEAF1A_Ethernet2 | routed | - | 172.31.255.2/31 | default | 1470 | false | - | - |
+| Ethernet2 | P2P_LINK_TO_DC1-LEAF1B_Ethernet2 | routed | - | 172.31.255.6/31 | default | 1470 | false | - | - |
+| Ethernet3 | P2P_LINK_TO_DC1-LEAF2A_Ethernet2 | routed | - | 172.31.255.10/31 | default | 1470 | false | - | - |
+| Ethernet4 | P2P_LINK_TO_DC1-LEAF2B_Ethernet2 | routed | - | 172.31.255.14/31 | default | 1470 | false | - | - |
 
 ### Ethernet Interfaces Device Configuration
 
@@ -237,28 +233,28 @@ vlan internal order ascending range 1006 1199
 interface Ethernet1
    description P2P_LINK_TO_DC1-LEAF1A_Ethernet2
    no shutdown
-   mtu 1500
+   mtu 1470
    no switchport
    ip address 172.31.255.2/31
 !
 interface Ethernet2
    description P2P_LINK_TO_DC1-LEAF1B_Ethernet2
    no shutdown
-   mtu 1500
+   mtu 1470
    no switchport
    ip address 172.31.255.6/31
 !
 interface Ethernet3
    description P2P_LINK_TO_DC1-LEAF2A_Ethernet2
    no shutdown
-   mtu 1500
+   mtu 1470
    no switchport
    ip address 172.31.255.10/31
 !
 interface Ethernet4
    description P2P_LINK_TO_DC1-LEAF2B_Ethernet2
    no shutdown
-   mtu 1500
+   mtu 1470
    no switchport
    ip address 172.31.255.14/31
 ```
@@ -306,7 +302,8 @@ service routing protocols model multi-agent
 
 | VRF | Routing Enabled |
 | --- | --------------- |
-| default | true|| MGMT | false |
+| default | true |
+| MGMT | false |
 
 ### IP Routing Device Configuration
 
@@ -321,8 +318,8 @@ no ip routing vrf MGMT
 
 | VRF | Routing Enabled |
 | --- | --------------- |
-| default | false || MGMT | false |
-
+| default | false |
+| MGMT | false |
 
 ## Static Routes
 
@@ -330,13 +327,13 @@ no ip routing vrf MGMT
 
 | VRF | Destination Prefix | Next Hop IP             | Exit interface      | Administrative Distance       | Tag               | Route Name                    | Metric         |
 | --- | ------------------ | ----------------------- | ------------------- | ----------------------------- | ----------------- | ----------------------------- | -------------- |
-| MGMT  | 0.0.0.0/0 |  10.255.0.1  |  -  |  1  |  -  |  -  |  - |
+| MGMT | 0.0.0.0/0 | 10.255.0.254 | - | 1 | - | - | - |
 
 ### Static Routes Device Configuration
 
 ```eos
 !
-ip route vrf MGMT 0.0.0.0/0 10.255.0.1
+ip route vrf MGMT 0.0.0.0/0 10.255.0.254
 ```
 
 ## Router BGP
@@ -364,7 +361,7 @@ ip route vrf MGMT 0.0.0.0/0 10.255.0.1
 | Address Family | evpn |
 | Next-hop unchanged | True |
 | Source | Loopback0 |
-| Bfd | true |
+| BFD | True |
 | Ebgp multihop | 3 |
 | Send community | all |
 | Maximum routes | 0 (no limit) |
@@ -379,22 +376,24 @@ ip route vrf MGMT 0.0.0.0/0 10.255.0.1
 
 ### BGP Neighbors
 
-| Neighbor | Remote AS | VRF |
-| -------- | --------- | --- |
-| 172.31.255.3 | 65101 | default |
-| 172.31.255.7 | 65101 | default |
-| 172.31.255.11 | 65102 | default |
-| 172.31.255.15 | 65102 | default |
-| 192.168.255.3 | 65101 | default |
-| 192.168.255.4 | 65101 | default |
-| 192.168.255.5 | 65102 | default |
-| 192.168.255.6 | 65102 | default |
+| Neighbor | Remote AS | VRF | Shutdown | Send-community | Maximum-routes | Allowas-in | BFD | RIB Pre-Policy Retain |
+| -------- | --------- | --- | -------- | -------------- | -------------- | ---------- | --- | --------------------- |
+| 172.31.255.3 | 65101 | default | - | Inherited from peer group IPv4-UNDERLAY-PEERS | Inherited from peer group IPv4-UNDERLAY-PEERS | - | - | - |
+| 172.31.255.7 | 65101 | default | - | Inherited from peer group IPv4-UNDERLAY-PEERS | Inherited from peer group IPv4-UNDERLAY-PEERS | - | - | - |
+| 172.31.255.11 | 65102 | default | - | Inherited from peer group IPv4-UNDERLAY-PEERS | Inherited from peer group IPv4-UNDERLAY-PEERS | - | - | - |
+| 172.31.255.15 | 65102 | default | - | Inherited from peer group IPv4-UNDERLAY-PEERS | Inherited from peer group IPv4-UNDERLAY-PEERS | - | - | - |
+| 192.168.255.3 | 65101 | default | - | Inherited from peer group EVPN-OVERLAY-PEERS | Inherited from peer group EVPN-OVERLAY-PEERS | - | Inherited from peer group EVPN-OVERLAY-PEERS | - |
+| 192.168.255.4 | 65101 | default | - | Inherited from peer group EVPN-OVERLAY-PEERS | Inherited from peer group EVPN-OVERLAY-PEERS | - | Inherited from peer group EVPN-OVERLAY-PEERS | - |
+| 192.168.255.5 | 65102 | default | - | Inherited from peer group EVPN-OVERLAY-PEERS | Inherited from peer group EVPN-OVERLAY-PEERS | - | Inherited from peer group EVPN-OVERLAY-PEERS | - |
+| 192.168.255.6 | 65102 | default | - | Inherited from peer group EVPN-OVERLAY-PEERS | Inherited from peer group EVPN-OVERLAY-PEERS | - | Inherited from peer group EVPN-OVERLAY-PEERS | - |
 
 ### Router BGP EVPN Address Family
 
-#### Router BGP EVPN MAC-VRFs
+#### EVPN Peer Groups
 
-#### Router BGP EVPN VRFs
+| Peer Group | Activate |
+| ---------- | -------- |
+| EVPN-OVERLAY-PEERS | True |
 
 ### Router BGP Device Configuration
 
@@ -463,7 +462,7 @@ router bgp 65001
 | -------- | ---------- | ---------- |
 | 1200 | 1200 | 3 |
 
-### Router BFD Multihop Device Configuration
+### Router BFD Device Configuration
 
 ```eos
 !

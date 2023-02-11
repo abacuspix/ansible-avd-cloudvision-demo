@@ -4,14 +4,14 @@ all:
     CVP:
       hosts:
         cv_ztp:
-          ansible_host: 10.83.28.164
+          ansible_host: 17.1.1.160
           ansible_user: root
-          ansible_password: ansible
+          ansible_password: Embe1mpls!
         cv_server:
-          ansible_httpapi_host: 10.83.28.164
-          ansible_host: 10.83.28.164
-          ansible_user: ansible
-          ansible_password: ansible
+          ansible_httpapi_host: 17.1.1.160
+          ansible_host: 17.1.1.160
+          ansible_user: cvpadmin
+          ansible_password: Embe1mpls!
           ansible_connection: httpapi
           ansible_httpapi_use_ssl: true
           ansible_httpapi_validate_certs: false
@@ -61,11 +61,12 @@ all:
                     DC1-L2LEAF2A:
                       ansible_host: 10.255.0.18
           vars:
-            ansible_connection: httpapi
+            #ansible_connection: httpapi
+            ansible_connection: network_cli
             ansible_network_os: eos
-            ansible_user: ansible
+            ansible_user: admin
             # should use vault for passwords
-            ansible_ssh_pass: ansible
+            ansible_ssh_pass: root123
             ansible_become: true
             ansible_become_method: enable
             ansible_httpapi_use_ssl: true

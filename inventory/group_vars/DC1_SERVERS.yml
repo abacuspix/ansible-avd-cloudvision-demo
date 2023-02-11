@@ -16,14 +16,30 @@ servers:
     adapters:
       - type: nic
         server_ports: [Eth0]
-        switch_ports: [Ethernet5]
+        switch_ports: [Ethernet3]
         switches: [DC1-L2LEAF1A]
-        profile: TENANT_A
+        profile: TENANT_A_B
   server02:
     rack: RackA
     adapters:
       - type: nic
         server_ports: [Eth0]
-        switch_ports: [Ethernet5]
+        switch_ports: [Ethernet3]
         switches: [DC1-L2LEAF2A]
-        profile: TENANT_A
+        profile: TENANT_A_B
+  server03:
+    rack: RackA
+    adapters:
+      - type: nic
+        server_ports: [Eth0]
+        switch_ports: [Ethernet4]
+        switches: [DC1-L2LEAF1A]
+        profile: TENANT_A_B
+  server04:
+    rack: RackA
+    adapters:
+      - type: nic
+        server_ports: [Eth0]
+        switch_ports: [Ethernet4]
+        switches: [DC1-L2LEAF2A]
+        profile: TENANT_A_B
