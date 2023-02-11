@@ -78,7 +78,7 @@ $ docker run --rm -it \
 $ make install
 #  Manual installation
 $ ansible-galaxy collection install arista.avd:==3.7.0
-$ ansible-galaxy collection install arista.cvp:==2.1.2
+$ ansible-galaxy collection install arista.cvp:==3.6.0 
 ```
 
 ## Configure DHCP server on CloudVision
