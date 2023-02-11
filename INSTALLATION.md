@@ -77,7 +77,7 @@ $ docker run --rm -it \
 #  Makefile approach
 $ make install
 #  Manual installation
-$ ansible-galaxy collection install arista.avd:==2.0.0
+$ ansible-galaxy collection install arista.avd:==3.7.0
 $ ansible-galaxy collection install arista.cvp:==2.1.2
 ```
 
